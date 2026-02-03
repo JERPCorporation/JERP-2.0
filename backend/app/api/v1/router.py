@@ -3,9 +3,7 @@ JERP 2.0 - API v1 Router
 Main router that includes all API endpoints
 """
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth, users, roles, audit, compliance
-
-from app.api.v1.endpoints import auth, users, roles, audit
+from app.api.v1.endpoints import auth, users, roles, audit, compliance, hr, payroll, finance, time_attendance, leave
 
 # Create main API router
 api_router = APIRouter()
@@ -16,6 +14,11 @@ api_router.include_router(users.router, prefix="/users", tags=["Users"])
 api_router.include_router(roles.router, prefix="/roles", tags=["Roles & Permissions"])
 api_router.include_router(audit.router, prefix="/audit", tags=["Audit Logs"])
 api_router.include_router(compliance.router, prefix="/compliance", tags=["Compliance"])
+api_router.include_router(hr.router, prefix="/hr", tags=["HR/HRIS"])
+api_router.include_router(payroll.router, prefix="/payroll", tags=["Payroll"])
+api_router.include_router(finance.router, prefix="/finance", tags=["Finance"])
+api_router.include_router(time_attendance.router, prefix="/time", tags=["Time & Attendance"])
+api_router.include_router(leave.router, prefix="/leave", tags=["Leave Management"])
 
 @api_router.get("/")
 async def root():
@@ -28,6 +31,11 @@ async def root():
             "users": "/users",
             "roles": "/roles",
             "audit": "/audit",
-            "compliance": "/compliance"
+            "compliance": "/compliance",
+            "hr": "/hr",
+            "payroll": "/payroll",
+            "finance": "/finance",
+            "time": "/time",
+            "leave": "/leave"
         }
     }
