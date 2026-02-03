@@ -559,7 +559,11 @@ def get_employee_hierarchy(
         employees = [employee]
     else:
         # Get all employees without managers (top-level)
-        employees = db.query(Employee).filter(Employee.manager_id == None).all()
+        employees = db.query(Employee).filter(Employee.manager_id.is_(None)).all()
+    
+    # Fetch all employees in one query to avoid N+1 problem
+    all_employees = db.query(Employee).all()
+    employees_by_id = {emp.id: emp for emp in all_employees}
     
     def build_hierarchy(emp: Employee) -> EmployeeHierarchy:
         """Recursively build employee hierarchy."""
@@ -575,8 +579,8 @@ def get_employee_hierarchy(
             direct_reports=[]
         )
         
-        # Get direct reports
-        direct_reports = db.query(Employee).filter(Employee.manager_id == emp.id).all()
+        # Get direct reports from pre-loaded dict
+        direct_reports = [e for e in all_employees if e.manager_id == emp.id]
         hierarchy.direct_reports = [build_hierarchy(report) for report in direct_reports]
         
         return hierarchy
@@ -685,7 +689,7 @@ def check_expiring_documents(
     # Query documents expiring within the period
     expiring_docs = db.query(EmployeeDocument).join(Employee).filter(
         and_(
-            EmployeeDocument.expiration_date != None,
+            EmployeeDocument.expiration_date.isnot(None),
             EmployeeDocument.expiration_date >= today,
             EmployeeDocument.expiration_date <= expiration_date
         )

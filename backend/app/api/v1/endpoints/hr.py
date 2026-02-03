@@ -325,7 +325,7 @@ async def get_employee_hierarchy_by_id(
     return hierarchy
 
 
-@router.get("/employees/hierarchy/all", response_model=List[EmployeeHierarchy])
+@router.get("/hierarchy", response_model=List[EmployeeHierarchy])
 async def get_all_employee_hierarchy(
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
