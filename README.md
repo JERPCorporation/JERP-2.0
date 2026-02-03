@@ -347,6 +347,165 @@ curl -X GET "http://localhost:8000/api/v1/users/me" \
 - `GET /api/v1/audit/verify` - Verify hash chain integrity
 - `GET /api/v1/audit/stats` - Get audit statistics
 
+#### Compliance (Phase 2) (10 endpoints)
+- `GET /api/v1/compliance/violations` - List compliance violations
+- `POST /api/v1/compliance/violations` - Log compliance violation
+- `GET /api/v1/compliance/violations/{id}` - Get violation details
+- `PUT /api/v1/compliance/violations/{id}` - Update violation
+- `POST /api/v1/compliance/violations/{id}/resolve` - Resolve violation
+- `GET /api/v1/compliance/reports` - List compliance reports
+- `POST /api/v1/compliance/reports/generate` - Generate compliance report
+- `GET /api/v1/compliance/stats` - Get compliance statistics
+- `GET /api/v1/compliance/rules` - List compliance rules
+- `GET /api/v1/compliance/dashboard` - Compliance dashboard data
+
+## Phase 3: HR, Payroll, Finance Modules
+
+Phase 3 implements comprehensive HR, Payroll, Finance, Time & Attendance, and Leave Management modules with deep integration into the Phase 2 compliance engines.
+
+### ✨ Key Features
+
+#### HR/HRIS Module
+- **Employee Management**: Complete employee lifecycle management
+- **Organizational Structure**: Departments and positions with hierarchy
+- **Employee Documents**: Document storage with expiration tracking
+- **Compliance Tracking**: FLSA classification, California employee designation
+- **Manager Hierarchy**: Direct reports and organizational charts
+
+#### Payroll Module with Labor Law Enforcement
+- **Automatic Compliance**: Payroll calculations automatically enforce CA Labor Code and FLSA
+- **Break Penalties**: Automatic calculation of meal/rest break penalties
+- **Overtime Rules**: Daily (8hrs/12hrs) and weekly (40hrs) overtime enforcement
+- **7th Day Rules**: Special overtime for 7th consecutive workday
+- **Violation Tracking**: All compliance violations logged for audit
+- **Multi-State Support**: Different rules for CA vs. other states
+
+#### Finance Module with GAAP/IFRS Validation
+- **Chart of Accounts**: Complete account structure with GAAP/IFRS categories
+- **Journal Entries**: Double-entry accounting with automatic validation
+- **Standards Compliance**: Validate against GAAP or IFRS before posting
+- **Financial Reports**: Balance sheet and income statement generation
+- **Compliance Tracking**: All entries validated and violations logged
+
+#### Time & Attendance Module
+- **Clock In/Out**: Simple time tracking with automatic calculations
+- **Break Tracking**: Meal and rest breaks for compliance monitoring
+- **Timesheet Approval**: Multi-level approval workflow
+- **Compliance Checking**: Automatic validation against labor laws
+- **7th Day Detection**: Identifies consecutive workday patterns
+
+#### Leave Management Module
+- **Leave Policies**: PTO, Sick, Vacation with accrual rules
+- **Balance Tracking**: Real-time leave balance calculations
+- **Request Workflow**: Submit, approve, reject leave requests
+- **Automatic Deductions**: Balance updates on approval
+- **Leave Calendar**: Organization-wide leave visibility
+
+### 📍 API Endpoints (Phase 3)
+
+#### HR/HRIS (12 endpoints)
+- `GET /api/v1/hr/employees` - List employees (paginated, filtered)
+- `POST /api/v1/hr/employees` - Create employee
+- `GET /api/v1/hr/employees/{id}` - Get employee details
+- `PUT /api/v1/hr/employees/{id}` - Update employee
+- `DELETE /api/v1/hr/employees/{id}` - Soft delete employee
+- `GET /api/v1/hr/employees/{id}/subordinates` - Get direct reports
+- `GET /api/v1/hr/departments` - List departments
+- `POST /api/v1/hr/departments` - Create department
+- `GET /api/v1/hr/positions` - List positions
+- `POST /api/v1/hr/positions` - Create position
+
+#### Payroll (7 endpoints)
+- `GET /api/v1/payroll/periods` - List payroll periods
+- `POST /api/v1/payroll/periods` - Create period
+- `POST /api/v1/payroll/periods/{id}/process` - Process with compliance
+- `POST /api/v1/payroll/periods/{id}/approve` - Approve after review
+- `GET /api/v1/payroll/payslips` - List payslips
+- `GET /api/v1/payroll/payslips/{id}` - Get payslip details
+- `GET /api/v1/payroll/compliance-report` - Compliance summary
+
+#### Finance (10 endpoints)
+- `GET /api/v1/finance/accounts` - Chart of accounts
+- `POST /api/v1/finance/accounts` - Create account
+- `GET /api/v1/finance/journal-entries` - List journal entries
+- `POST /api/v1/finance/journal-entries` - Create entry
+- `POST /api/v1/finance/journal-entries/{id}/post` - Post with validation
+- `GET /api/v1/finance/reports/balance-sheet` - Balance sheet
+- `GET /api/v1/finance/reports/income-statement` - Income statement
+- `GET /api/v1/finance/compliance-status` - GAAP/IFRS compliance
+
+#### Time & Attendance (10 endpoints)
+- `POST /api/v1/time/clock-in` - Clock in
+- `POST /api/v1/time/clock-out` - Clock out
+- `POST /api/v1/time/break/start` - Start break
+- `POST /api/v1/time/break/end` - End break
+- `GET /api/v1/time/timesheets` - List timesheets
+- `POST /api/v1/time/timesheets` - Create timesheet
+- `POST /api/v1/time/timesheets/{id}/submit` - Submit for approval
+- `POST /api/v1/time/timesheets/{id}/approve` - Approve (with compliance check)
+
+#### Leave Management (8 endpoints)
+- `GET /api/v1/leave/policies` - List policies
+- `POST /api/v1/leave/policies` - Create policy
+- `GET /api/v1/leave/balances` - Get my balances
+- `GET /api/v1/leave/requests` - List requests
+- `POST /api/v1/leave/requests` - Create request
+- `POST /api/v1/leave/requests/{id}/approve` - Approve request
+- `POST /api/v1/leave/requests/{id}/reject` - Reject request
+- `GET /api/v1/leave/calendar` - Leave calendar
+
+### 🔄 Compliance Integration
+
+Phase 3 modules are deeply integrated with Phase 2 compliance engines:
+
+1. **Payroll Processing**:
+   - Automatically applies CA Labor Code overtime rules
+   - Validates FLSA exempt/non-exempt classification
+   - Calculates and applies break penalties
+   - Logs all violations to compliance system
+
+2. **Finance Transactions**:
+   - Validates journal entries against GAAP or IFRS
+   - Checks for prohibited practices (e.g., LIFO in IFRS)
+   - Ensures balance sheet equation
+   - Logs all compliance violations
+
+3. **Time Tracking**:
+   - Monitors meal and rest break compliance
+   - Detects 7th consecutive workday patterns
+   - Validates hours against labor laws
+
+### 📊 Example: Payroll with Compliance
+
+```python
+# Process payroll period with automatic compliance
+POST /api/v1/payroll/periods/1/process
+
+# Response includes compliance results
+{
+    "payslips_created": 50,
+    "violations_count": 3,
+    "total_gross": 125000.00,
+    "total_net": 95000.00
+}
+
+# Violations are automatically logged
+GET /api/v1/compliance/violations?entity_type=timesheet_entry
+
+# Each payslip shows compliance status
+GET /api/v1/payroll/payslips/1
+{
+    "id": 1,
+    "employee_id": 101,
+    "regular_hours": 80.0,
+    "overtime_hours": 12.0,
+    "meal_break_penalty": 50.00,  # Auto-calculated
+    "california_labor_compliant": false,
+    "flsa_compliant": true,
+    "compliance_notes": "Meal break #1 not provided..."
+}
+```
+
 ### Security Features
 
 - **JWT Authentication**: Secure token-based authentication
