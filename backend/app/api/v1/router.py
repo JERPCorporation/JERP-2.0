@@ -5,6 +5,9 @@ Main router that includes all API endpoints
 from fastapi import APIRouter
 from app.api.v1.endpoints import auth, users, roles, audit, compliance
 
+from app.api.v1.endpoints import auth, users, roles, audit
+
+# Create main API router
 api_router = APIRouter()
 
 # Include all endpoint routers

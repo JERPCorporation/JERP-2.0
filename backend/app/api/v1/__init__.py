@@ -1,1 +1,3 @@
-"""API v1 package"""
+"""
+JERP 2.0 - API v1 Package
+"""
