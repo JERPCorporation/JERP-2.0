@@ -3,7 +3,7 @@ JERP 2.0 - Audit Log Endpoints
 Audit trail and compliance reporting API
 """
 from typing import List, Optional
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_
@@ -154,7 +154,7 @@ async def get_audit_stats(
     total_logs = db.query(func.count(AuditLog.id)).scalar()
     
     # Actions per day (last 30 days)
-    thirty_days_ago = datetime.utcnow().date() - __import__('datetime').timedelta(days=30)
+    thirty_days_ago = datetime.utcnow().date() - timedelta(days=30)
     actions_per_day = db.query(
         func.date(AuditLog.created_at).label('date'),
         func.count(AuditLog.id).label('count')
