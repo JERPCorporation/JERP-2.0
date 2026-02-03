@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 
 # Create SQLAlchemy engine for MySQL
-engine = create_engine(
+jerp_engine = create_engine(
     settings.DATABASE_URL,
     pool_pre_ping=True,
     pool_size=10,
@@ -18,7 +18,7 @@ engine = create_engine(
 )
 
 # Session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=jerp_engine)
 
 # Base class for models
 Base = declarative_base()
@@ -34,11 +34,10 @@ def get_db():
     finally:
         db.close()
 
-
 def init_db():
     """
     Initialize database tables.
     Called on application startup.
     """
     from app.models import user, role, audit_log  # noqa: F401
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=jerp_engine)
