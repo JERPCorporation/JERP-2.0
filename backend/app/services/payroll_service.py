@@ -19,6 +19,21 @@ from app.schemas.payroll import (
 from app.services.auth_service import create_audit_log
 
 
+# Compliance Constants
+# TODO: Move these to configuration/database for easier updates
+CA_MINIMUM_WAGE = Decimal('16.00')  # California minimum wage as of 2024
+
+# Tax Rates (Simplified)
+# TODO: Implement proper tax table lookups based on filing status, income brackets, etc.
+FEDERAL_TAX_RATE = Decimal('0.12')      # Example: 12% federal withholding
+STATE_TAX_RATE = Decimal('0.06')        # Example: 6% CA state withholding
+SOCIAL_SECURITY_RATE = Decimal('0.062')  # 6.2% Social Security (statutory)
+MEDICARE_RATE = Decimal('0.0145')        # 1.45% Medicare (statutory)
+
+# Payroll Frequency
+ANNUAL_PAY_PERIODS = Decimal('24')  # Bi-weekly payroll assumption
+
+
 def create_payroll_period(
     period_data: PayrollPeriodCreate,
     current_user: User,
@@ -147,7 +162,7 @@ def calculate_payslip(
     # Calculate regular pay
     if employee.salary:
         # Salaried employee - bi-weekly assumption (24 periods per year)
-        regular_pay = employee.salary / Decimal('24')
+        regular_pay = employee.salary / ANNUAL_PAY_PERIODS
     else:
         # Hourly employee
         regular_hours = hours_data.regular_hours or Decimal('0.00')
@@ -178,11 +193,11 @@ def calculate_payslip(
         (hours_data.other_earnings or Decimal('0.00'))
     )
     
-    # Calculate taxes (simplified - production would use IRS/FTB tax tables)
-    federal_tax = gross_pay * Decimal('0.12')  # Example 12% federal rate
-    state_tax = gross_pay * Decimal('0.06')    # Example 6% CA state rate
-    social_security = gross_pay * Decimal('0.062')  # 6.2% Social Security
-    medicare = gross_pay * Decimal('0.0145')        # 1.45% Medicare
+    # Calculate taxes (using configured rates)
+    federal_tax = gross_pay * FEDERAL_TAX_RATE
+    state_tax = gross_pay * STATE_TAX_RATE
+    social_security = gross_pay * SOCIAL_SECURITY_RATE
+    medicare = gross_pay * MEDICARE_RATE
     
     # Total deductions
     total_deductions = (
@@ -203,9 +218,7 @@ def calculate_payslip(
     ca_labor_code_compliant = True
     compliance_notes = []
     
-    # Check minimum wage (CA: $16.00/hr as of 2024)
-    CA_MINIMUM_WAGE = Decimal('16.00')
-    
+    # Check minimum wage (using configured CA minimum wage)
     if not is_exempt:
         total_hours = (
             (hours_data.regular_hours or Decimal('0.00')) + 
