@@ -442,7 +442,7 @@ class GAAP:
             if current_ratio < Decimal("1.0"):
                 violations.append(GAAPViolation(
                     principle="Going Concern",
-                    description=f"Current ratio {current_ratio:.2f} is below 1.0, indicating potential liquidity issues",
+                    description=f"Current ratio {float(current_ratio):.2f} is below 1.0, indicating potential liquidity issues",
                     severity="HIGH",
                     amount=current_liabilities - current_assets
                 ))

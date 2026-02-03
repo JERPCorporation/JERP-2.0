@@ -2,7 +2,7 @@
 JERP 2.0 - Compliance Service
 Business logic for compliance violation tracking and reporting
 """
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from decimal import Decimal
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
@@ -280,7 +280,7 @@ class ComplianceService:
         old_status = violation.status.value
         
         violation.status = ViolationStatus.RESOLVED
-        violation.resolved_at = datetime.utcnow()
+        violation.resolved_at = datetime.now(timezone.utc)
         violation.resolution_notes = resolution_notes
         
         # Create audit log

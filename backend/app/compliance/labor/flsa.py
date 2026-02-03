@@ -261,7 +261,7 @@ class FLSA:
             ))
         
         # Hour restrictions for ages 14-15
-        if employee_age >= 14 and employee_age < 16:
+        if 14 <= employee_age < 16:
             if is_school_day:
                 if hours_worked > self.CHILD_MAX_HOURS_SCHOOL_DAY:
                     violations.append(ChildLaborViolation(

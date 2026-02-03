@@ -253,7 +253,8 @@ class CaliforniaLaborCode:
         
         # Calculate required rest breaks
         # Per CA law: one rest break per 4 hours or major fraction thereof
-        required_breaks = int((hours_worked / self.REST_BREAK_INTERVAL).quantize(Decimal("1"), rounding="ROUND_UP"))
+        from decimal import ROUND_UP
+        required_breaks = int((hours_worked / self.REST_BREAK_INTERVAL).quantize(Decimal("1"), rounding=ROUND_UP))
         
         # Cap at reasonable maximum (e.g., 3 breaks for 12 hour shift)
         required_breaks = min(required_breaks, 3)
