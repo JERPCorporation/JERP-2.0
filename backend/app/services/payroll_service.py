@@ -252,16 +252,28 @@ async def calculate_payslip(
     gross_pay = regular_pay + overtime_pay + bonus + commission
     
     # Calculate deductions
-    # Federal tax (simplified - 15% for demonstration)
+    # NOTE: These are simplified tax calculations for demonstration purposes.
+    # In production, replace with proper tax withholding calculations based on:
+    # - Employee W-4 information (filing status, allowances, additional withholding)
+    # - Current federal and state tax brackets
+    # - Jurisdiction-specific requirements
+    # - Year-to-date earnings for Social Security wage base limit
+    
+    # Federal tax (simplified - 15% flat rate for demonstration)
+    # TODO: Replace with graduated tax bracket calculation based on W-4
     federal_tax = gross_pay * Decimal("0.15")
     
-    # State tax (simplified - 5% for demonstration)
+    # State tax (simplified - 5% flat rate for demonstration)
+    # TODO: Replace with state-specific tax tables
     state_tax = gross_pay * Decimal("0.05")
     
     # Social Security (6.2% up to wage base limit)
+    # TODO: Implement year-to-date tracking and wage base limit checking
+    # Current wage base limit for 2024: $168,600
     social_security = gross_pay * Decimal("0.062")
     
     # Medicare (1.45%)
+    # TODO: Add additional 0.9% Medicare tax for high earners (> $200k)
     medicare = gross_pay * Decimal("0.0145")
     
     # Additional deductions from input
@@ -437,6 +449,9 @@ async def process_pay_period(
         
         try:
             # Create calculation data with default hours for hourly employees
+            # NOTE: Using 40 hours as default for standard full-time work week.
+            # For part-time or variable schedule employees, hours should be 
+            # entered manually via the individual payslip calculation endpoint.
             calc_data = PayslipCalculation(
                 employee_id=employee.id,
                 pay_period_id=pay_period_id,
@@ -550,7 +565,10 @@ async def get_payroll_summary(
     end_date: Optional[date] = None
 ) -> PayrollSummary:
     """Get aggregated payroll statistics."""
-    query = db.query(Payslip).join(PayPeriod)
+    # Use eager loading to avoid N+1 query problem
+    query = db.query(Payslip).join(PayPeriod).options(
+        joinedload(Payslip.employee).joinedload(Employee.department)
+    )
     
     # Apply filters
     if pay_period_id:
@@ -593,13 +611,13 @@ async def get_payroll_summary(
     # Group by department
     dept_summary = {}
     for payslip in payslips:
-        employee = db.query(Employee).filter(Employee.id == payslip.employee_id).first()
-        if employee and employee.department:
-            dept_id = employee.department_id
+        # Employee and department are already loaded via eager loading
+        if payslip.employee and payslip.employee.department:
+            dept_id = payslip.employee.department_id
             if dept_id not in dept_summary:
                 dept_summary[dept_id] = {
                     "department_id": dept_id,
-                    "department_name": employee.department.name,
+                    "department_name": payslip.employee.department.name,
                     "employee_count": 0,
                     "employee_ids": set(),
                     "total_gross_pay": Decimal("0"),

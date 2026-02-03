@@ -31,11 +31,8 @@ TEST_DATABASE_URL = "sqlite:///:memory:"
 @pytest.fixture(scope="function")
 def db_session():
     """Create a test database session"""
-    import time
-    import random
-    # Use random database name to avoid collision
-    db_name = f":memory:?cache=private&_{int(time.time()*1000000)}_{random.randint(1000,9999)}"
-    engine = create_engine(f"sqlite:///{db_name}", connect_args={"check_same_thread": False})
+    # Each test gets a fresh in-memory database
+    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     session = TestingSessionLocal()
