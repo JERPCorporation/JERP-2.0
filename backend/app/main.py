@@ -30,6 +30,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Startup event
+@app.on_event("startup")
+async def on_startup():
+    """Run startup tasks"""
+    await startup_event()
+
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 

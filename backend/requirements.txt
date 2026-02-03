@@ -20,6 +20,7 @@ python-multipart==0.0.22  # Fixed: Multiple vulnerabilities including arbitrary 
 
 # Utilities
 python-dateutil==2.8.2
+click==8.1.7
 
 # Testing
 pytest==7.4.3
