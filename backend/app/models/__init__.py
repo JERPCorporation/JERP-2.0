@@ -27,6 +27,11 @@ from app.models.payroll import (
     PayrollPeriod,
     Payslip,
     PayrollStatus,
+    PayPeriod,
+    Payslip,
+    PayPeriodStatus,
+    PayPeriodType,
+    PayslipStatus,
 )
 
 __all__ = [
@@ -52,4 +57,9 @@ __all__ = [
     "PayrollPeriod",
     "Payslip",
     "PayrollStatus",
+    "PayPeriod",
+    "Payslip",
+    "PayPeriodStatus",
+    "PayPeriodType",
+    "PayslipStatus",
 ]
