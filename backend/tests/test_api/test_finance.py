@@ -260,6 +260,58 @@ def test_create_journal_entry_single_line(client: TestClient, auth_headers: dict
     assert response.status_code == 422
 
 
+def test_create_journal_entry_both_debit_credit(client: TestClient, auth_headers: dict, test_accounts: dict):
+    """Test that journal entry line with both debit and credit is rejected"""
+    response = client.post(
+        "/api/v1/finance/journal-entries",
+        json={
+            "entry_date": str(date.today()),
+            "description": "Invalid line entry",
+            "lines": [
+                {
+                    "account_id": test_accounts["cash"].id,
+                    "debit": "1000.00",
+                    "credit": "500.00"  # Both values - invalid!
+                },
+                {
+                    "account_id": test_accounts["capital"].id,
+                    "debit": "0.00",
+                    "credit": "1500.00"
+                }
+            ]
+        },
+        headers=auth_headers
+    )
+    
+    assert response.status_code == 422
+
+
+def test_create_journal_entry_zero_amounts(client: TestClient, auth_headers: dict, test_accounts: dict):
+    """Test that journal entry line with zero amounts is rejected"""
+    response = client.post(
+        "/api/v1/finance/journal-entries",
+        json={
+            "entry_date": str(date.today()),
+            "description": "Zero amount line entry",
+            "lines": [
+                {
+                    "account_id": test_accounts["cash"].id,
+                    "debit": "0.00",
+                    "credit": "0.00"  # Both zero - invalid!
+                },
+                {
+                    "account_id": test_accounts["capital"].id,
+                    "debit": "0.00",
+                    "credit": "0.00"
+                }
+            ]
+        },
+        headers=auth_headers
+    )
+    
+    assert response.status_code == 422
+
+
 def test_list_journal_entries(client: TestClient, auth_headers: dict, test_accounts: dict, db: Session, admin_user: User):
     """Test listing journal entries"""
     # Create a journal entry first

@@ -64,6 +64,13 @@ class JournalEntryLineBase(BaseModel):
         if v < 0:
             raise ValueError('Amount cannot be negative')
         return v
+    
+    def model_post_init(self, __context):
+        """Validate that exactly one of debit or credit is non-zero"""
+        if self.debit > 0 and self.credit > 0:
+            raise ValueError('Cannot have both debit and credit amounts. One must be zero.')
+        if self.debit == 0 and self.credit == 0:
+            raise ValueError('Either debit or credit must be greater than zero')
 
 
 class JournalEntryLineCreate(JournalEntryLineBase):
