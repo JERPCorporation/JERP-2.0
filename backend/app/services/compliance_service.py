@@ -101,7 +101,7 @@ class ComplianceService:
             assigned_to=violation_data.assigned_to,
             status=ViolationStatus.OPEN,
             audit_log_id=audit_log.id,
-            metadata=violation_data.metadata,
+            violation_metadata=violation_data.violation_metadata,
         )
         
         self.db.add(violation)
@@ -218,8 +218,8 @@ class ComplianceService:
             violation.resolution_notes = update_data.resolution_notes
         if update_data.financial_impact is not None:
             violation.financial_impact = update_data.financial_impact
-        if update_data.metadata is not None:
-            violation.metadata = update_data.metadata
+        if update_data.violation_metadata is not None:
+            violation.violation_metadata = update_data.violation_metadata
         
         # Create audit log
         last_audit = self.db.query(AuditLog).order_by(AuditLog.id.desc()).first()
