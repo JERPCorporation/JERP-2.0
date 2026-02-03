@@ -76,7 +76,12 @@ async def create_pay_period(
         action="CREATE",
         resource_type="pay_period",
         resource_id=str(pay_period.id),
-        new_values=period_data.model_dump(),
+        new_values={
+            "start_date": str(period_data.start_date),
+            "end_date": str(period_data.end_date),
+            "pay_date": str(period_data.pay_date),
+            "period_type": period_data.period_type.value
+        },
         description=f"Created pay period {pay_period.start_date} to {pay_period.end_date}",
         ip_address=ip_address,
         user_agent=user_agent
