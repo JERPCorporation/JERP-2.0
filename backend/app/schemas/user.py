@@ -2,51 +2,40 @@
 JERP 2.0 - User Schemas
 Pydantic models for user management
 """
-from typing import List, Optional
-from datetime import datetime
 from pydantic import BaseModel, EmailStr
+from typing import Optional
+from datetime import datetime
 
 
 class UserBase(BaseModel):
-    """Base user schema"""
+    """Base user fields"""
     email: EmailStr
     full_name: Optional[str] = None
+    is_active: bool = True
 
 
 class UserCreate(UserBase):
-    """User creation schema with password"""
+    """User creation request"""
     password: str
     role_id: Optional[int] = None
 
 
 class UserUpdate(BaseModel):
-    """User update schema - all fields optional"""
+    """User update request - all fields optional"""
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
-    role_id: Optional[int] = None
     is_active: Optional[bool] = None
+    role_id: Optional[int] = None
 
 
 class UserResponse(UserBase):
-    """User response with full details"""
+    """User response with all fields"""
     id: int
-    is_active: bool
     is_superuser: bool
-    role_id: Optional[int] = None
-    role: Optional['RoleResponse'] = None
+    role_id: Optional[int]
     created_at: datetime
-    last_login: Optional[datetime] = None
+    updated_at: datetime
+    last_login: Optional[datetime]
     
     class Config:
         from_attributes = True
-
-
-class UserListResponse(BaseModel):
-    """Paginated user list response"""
-    total: int
-    items: List[UserResponse]
-
-
-# Import RoleResponse for forward reference
-from app.schemas.role import RoleResponse  # noqa: E402
-UserResponse.model_rebuild()

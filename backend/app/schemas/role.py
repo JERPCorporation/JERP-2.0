@@ -1,22 +1,27 @@
 """
 JERP 2.0 - Role & Permission Schemas
-Pydantic models for RBAC (Role-Based Access Control)
+Pydantic models for RBAC management
 """
-from typing import List, Optional
-from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional, List
+from datetime import datetime
 
 
 class PermissionBase(BaseModel):
-    """Base permission schema"""
+    """Base permission fields"""
     code: str
     name: str
     description: Optional[str] = None
     module: str
 
 
+class PermissionCreate(PermissionBase):
+    """Permission creation request"""
+    pass
+
+
 class PermissionResponse(PermissionBase):
-    """Permission response with ID and timestamp"""
+    """Permission response with all fields"""
     id: int
     created_at: datetime
     
@@ -25,19 +30,19 @@ class PermissionResponse(PermissionBase):
 
 
 class RoleBase(BaseModel):
-    """Base role schema"""
+    """Base role fields"""
     name: str
     description: Optional[str] = None
     is_active: bool = True
 
 
 class RoleCreate(RoleBase):
-    """Role creation schema with permissions"""
+    """Role creation request"""
     permission_ids: List[int] = []
 
 
 class RoleUpdate(BaseModel):
-    """Role update schema - all fields optional"""
+    """Role update request - all fields optional"""
     name: Optional[str] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None
@@ -45,7 +50,7 @@ class RoleUpdate(BaseModel):
 
 
 class RoleResponse(RoleBase):
-    """Role response with ID, timestamps, and permissions"""
+    """Role response with permissions"""
     id: int
     created_at: datetime
     updated_at: datetime

@@ -1,7 +1,4 @@
 """
 JERP 2.0 - Services Package
-Business logic services
+Business logic layer for the application
 """
-from app.services.compliance_service import ComplianceService
-
-__all__ = ["ComplianceService"]

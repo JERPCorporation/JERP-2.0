@@ -1,45 +1,28 @@
 """
 JERP 2.0 - Audit Log Schemas
-Pydantic models for audit trail and compliance
+Pydantic models for audit logging
 """
-from typing import List, Optional
-from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional, Dict, Any
+from datetime import datetime
 
 
 class AuditLogResponse(BaseModel):
-    """Audit log entry response"""
+    """Audit log response"""
     id: int
-    user_id: Optional[int] = None
-    user_email: Optional[str] = None
+    user_id: Optional[int]
+    user_email: Optional[str]
     action: str
     resource_type: str
-    resource_id: Optional[str] = None
-    old_values: Optional[dict] = None
-    new_values: Optional[dict] = None
-    description: Optional[str] = None
-    ip_address: Optional[str] = None
-    user_agent: Optional[str] = None
-    previous_hash: Optional[str] = None
+    resource_id: Optional[str]
+    old_values: Optional[Dict[str, Any]]
+    new_values: Optional[Dict[str, Any]]
+    description: Optional[str]
+    ip_address: Optional[str]
+    user_agent: Optional[str]
+    previous_hash: Optional[str]
     current_hash: str
     created_at: datetime
     
     class Config:
         from_attributes = True
-
-
-class AuditLogListResponse(BaseModel):
-    """Paginated audit log list response"""
-    total: int
-    items: List[AuditLogResponse]
-
-
-class AuditLogQueryParams(BaseModel):
-    """Query parameters for filtering audit logs"""
-    user_id: Optional[int] = None
-    action: Optional[str] = None
-    resource_type: Optional[str] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-    skip: int = 0
-    limit: int = 100

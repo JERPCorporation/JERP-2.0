@@ -1,10 +1,9 @@
 """
 JERP 2.0 - Authentication Schemas
-Pydantic models for authentication requests and responses
+Pydantic models for authentication endpoints
 """
-from typing import Optional
 from pydantic import BaseModel, EmailStr
-from app.schemas.user import UserResponse
+from typing import Optional
 
 
 class LoginRequest(BaseModel):
@@ -17,16 +16,14 @@ class RegisterRequest(BaseModel):
     """User registration request"""
     email: EmailStr
     password: str
-    full_name: str
-    role_id: Optional[int] = None
+    full_name: Optional[str] = None
 
 
 class TokenResponse(BaseModel):
-    """JWT token response with user information"""
+    """JWT token response"""
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
-    user: UserResponse
 
 
 class RefreshTokenRequest(BaseModel):
@@ -36,5 +33,5 @@ class RefreshTokenRequest(BaseModel):
 
 class ChangePasswordRequest(BaseModel):
     """Change password request"""
-    old_password: str
+    current_password: str
     new_password: str
