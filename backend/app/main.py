@@ -34,13 +34,6 @@ app.add_middleware(
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize database on startup"""
-    from app.core.database import init_db
-    init_db()
-
-
 @app.get("/health")
 async def health_check(db: Session = Depends(get_db)):
     """
