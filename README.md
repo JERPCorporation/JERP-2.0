@@ -1,5 +1,7 @@
 # JERP 2.0 - On-Premise Compliance ERP Suite
 
+<a href="https://hub.docker.com/r/ninoyerbas/jerp-backend"><img src="https://img.shields.io/docker/v/ninoyerbas/jerp-backend?label=Docker%20Hub&amp;logo=docker"></a>
+
 **Julio's Enterprise Resource Planning System - Version 2.0**
 
 A comprehensive, on-premise ERP solution focused on **Labor Law Compliance** and **Financial Compliance (GAAP/IFRS**).
