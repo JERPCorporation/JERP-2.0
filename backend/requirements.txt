@@ -9,6 +9,11 @@ pydantic-settings==2.1.0
 # Database
 sqlalchemy==2.0.25
 pymysql==1.1.1
+cryptography==42.0.4
+alembic==1.13.1
+
+# Authentication
+python-jose[cryptography]==3.3.0
 cryptography==44.0.1
 alembic==1.13.1
 
