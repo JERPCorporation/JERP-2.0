@@ -1,43 +1,34 @@
 """
 JERP 2.0 - Schemas Package
-Pydantic schemas for request/response validation
+Pydantic models for API request/response validation
 """
-from app.schemas.compliance import (
-    ComplianceViolationCreate,
-    ComplianceViolationUpdate,
-    ComplianceViolationResponse,
-    ComplianceViolationResolve,
-    ComplianceViolationFilter,
-    ComplianceRuleCreate,
-    ComplianceRuleUpdate,
-    ComplianceRuleResponse,
-    ComplianceReportCreate,
-    ComplianceReportResponse,
-    ComplianceDashboardResponse,
-    ViolationStatistics,
-    ViolationTrend,
-    TimesheetValidationRequest,
-    TimesheetValidationResponse,
-    TransactionValidationRequest,
-    TransactionValidationResponse,
-)
+from app.schemas.auth import *
+from app.schemas.user import *
+from app.schemas.role import *
+from app.schemas.audit import *
 
 __all__ = [
-    "ComplianceViolationCreate",
-    "ComplianceViolationUpdate",
-    "ComplianceViolationResponse",
-    "ComplianceViolationResolve",
-    "ComplianceViolationFilter",
-    "ComplianceRuleCreate",
-    "ComplianceRuleUpdate",
-    "ComplianceRuleResponse",
-    "ComplianceReportCreate",
-    "ComplianceReportResponse",
-    "ComplianceDashboardResponse",
-    "ViolationStatistics",
-    "ViolationTrend",
-    "TimesheetValidationRequest",
-    "TimesheetValidationResponse",
-    "TransactionValidationRequest",
-    "TransactionValidationResponse",
+    # Auth schemas
+    "LoginRequest",
+    "RegisterRequest",
+    "TokenResponse",
+    "RefreshTokenRequest",
+    "ChangePasswordRequest",
+    # User schemas
+    "UserBase",
+    "UserCreate",
+    "UserUpdate",
+    "UserResponse",
+    "UserListResponse",
+    # Role schemas
+    "PermissionBase",
+    "PermissionResponse",
+    "RoleBase",
+    "RoleCreate",
+    "RoleUpdate",
+    "RoleResponse",
+    # Audit schemas
+    "AuditLogResponse",
+    "AuditLogListResponse",
+    "AuditLogQueryParams",
 ]
