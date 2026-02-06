@@ -260,7 +260,7 @@ This document summarizes the complete implementation of Phase 1 infrastructure r
 
 ```powershell
 # Clone repository
-git clone https://github.com/ninoyerbas/JERP-2.0.git
+git clone https://github.com/juliocesarmendeztobar/JERP-2.0.git
 cd JERP-2.0
 
 # Configure environment

@@ -29,7 +29,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ninoyerbas/jerp-backend
+        images: juliocesarmendeztobar/jerp-backend
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -49,7 +49,7 @@ jobs:
     
     - name: Test Docker image
       run: |
-        docker run -d --name jerp-test -p 8000:8000 ninoyerbas/jerp-backend:${{ steps.meta.outputs.version }}
+        docker run -d --name jerp-test -p 8000:8000 juliocesarmendeztobar/jerp-backend:${{ steps.meta.outputs.version }}
         sleep 10
         curl -f http://localhost:8000/health || exit 1
         docker stop jerp-test

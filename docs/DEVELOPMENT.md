@@ -16,7 +16,7 @@ This guide covers local development setup for JERP 2.0.
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/ninoyerbas/JERP-2.0.git
+git clone https://github.com/juliocesarmendeztobar/JERP-2.0.git
 cd JERP-2.0
 ```
 

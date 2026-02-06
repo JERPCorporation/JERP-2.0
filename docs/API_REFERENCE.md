@@ -254,5 +254,5 @@ For detailed, interactive documentation with request/response examples and the a
 **http://localhost:8000/api/v1/docs**
 
 For issues or questions:
-- GitHub Issues: https://github.com/ninoyerbas/JERP-2.0/issues
+- GitHub Issues: https://github.com/juliocesarmendeztobar/JERP-2.0/issues
 - Documentation: See `/docs` directory

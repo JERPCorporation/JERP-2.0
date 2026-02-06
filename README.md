@@ -1,8 +1,11 @@
-# JERP 2.0 - On-Premise Compliance ERP Suite
+# JERP 2.0 - Enterprise Resource Planning System
 
-<a href="https://hub.docker.com/r/ninoyerbas/jerp-backend"><img src="https://img.shields.io/docker/v/ninoyerbas/jerp-backend?label=Docker%20Hub&amp;logo=docker"></a>
+**Author:** Julio Cesar Mendez Tobar  
+**Copyright:** © 2025-2026 Julio Cesar Mendez Tobar. All Rights Reserved.  
+**License:** Proprietary  
+**Version:** 2.0
 
-**Julio's Enterprise Resource Planning System - Version 2.0**
+<a href="https://hub.docker.com/r/juliocesarmendeztobar/jerp-backend"><img src="https://img.shields.io/docker/v/juliocesarmendeztobar/jerp-backend?label=Docker%20Hub&amp;logo=docker"></a>
 
 A comprehensive, on-premise ERP solution focused on **Labor Law Compliance** and **Financial Compliance (GAAP/IFRS**).
 
@@ -79,7 +82,7 @@ JERP 2.0 includes a comprehensive compliance framework that automatically monito
 
 ```powershell
 # Clone the repository
-git clone https://github.com/ninoyerbas/JERP-2.0.git
+git clone https://github.com/juliocesarmendeztobar/JERP-2.0.git
 cd JERP-2.0
 
 # Configure environment
@@ -107,7 +110,7 @@ See [Installation Guide](docs/INSTALLATION.md) for detailed Windows setup.
 ### Linux/Mac (Local Development)
 
 ```bash
-git clone https://github.com/ninoyerbas/JERP-2.0.git
+git clone https://github.com/juliocesarmendeztobar/JERP-2.0.git
 cd JERP-2.0
 cp .env.example .env
 # Edit .env with your settings (see below)
@@ -360,8 +363,15 @@ curl -X GET "http://localhost:8000/api/v1/users/me" \
 
 ## 📄 License
 
-MIT License - See LICENSE file for details.
+Proprietary License - See LICENSE file for details.
+
+## Copyright Notice
+
+This software is the proprietary property of Julio Cesar Mendez Tobar.
+Unauthorized copying, distribution, modification, or use is strictly prohibited.
 
 ---
 
-**JERP 2.0** - Enterprise Compliance Made Simple
+**JERP 2.0** - Enterprise Resource Planning System  
+**Built by Julio Cesar Mendez Tobar**  
+**Copyright © 2025-2026 Julio Cesar Mendez Tobar. All Rights Reserved.**

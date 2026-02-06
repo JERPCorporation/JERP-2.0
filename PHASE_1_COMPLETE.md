@@ -194,7 +194,7 @@ Phase 1: Foundation & Core Setup has been successfully completed for JERP 2.0. T
 
 ```powershell
 # 1. Clone repository
-git clone https://github.com/ninoyerbas/JERP-2.0.git
+git clone https://github.com/juliocesarmendeztobar/JERP-2.0.git
 cd JERP-2.0
 
 # 2. Configure environment
@@ -309,7 +309,7 @@ With Phase 1 complete, the foundation is ready for:
 - **Admin Guide**: docs/ADMIN_GUIDE.md
 - **API Reference**: docs/API_REFERENCE.md
 - **API Documentation**: http://localhost:8000/api/v1/docs (when running)
-- **GitHub Issues**: https://github.com/ninoyerbas/JERP-2.0/issues
+- **GitHub Issues**: https://github.com/juliocesarmendeztobar/JERP-2.0/issues
 
 ## Security Summary
 

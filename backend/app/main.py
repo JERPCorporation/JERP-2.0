@@ -1,4 +1,21 @@
 """
+JERP 2.0 - Enterprise Resource Planning System
+Copyright (c) 2025-2026 Julio Cesar Mendez Tobar. All Rights Reserved.
+
+PROPRIETARY AND CONFIDENTIAL
+
+This software and associated documentation files (the "Software") are
+the proprietary and confidential information of Julio Cesar Mendez Tobar.
+
+Unauthorized copying, modification, distribution, or use of this software,
+via any medium, is strictly prohibited without the express written permission
+of the copyright holder.
+
+Author: Julio Cesar Mendez Tobar
+Version: 2.0
+"""
+
+"""
 JERP 2.0 - Main FastAPI Application
 Enterprise Resource Planning System with Compliance Focus
 """
