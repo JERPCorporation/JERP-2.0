@@ -482,7 +482,7 @@ Invoke-RestMethod -Uri "http://localhost:8000/api/v1/compliance/reports" `
 
 - **Documentation**: `/docs` directory
 - **API Docs**: http://localhost:8000/api/v1/docs
-- **GitHub Issues**: https://github.com/ninoyerbas/JERP-2.0/issues
+- **GitHub Issues**: https://github.com/juliocesarmendeztobar/JERP-2.0/issues
 
 ### Log Locations
 

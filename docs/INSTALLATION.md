@@ -48,7 +48,7 @@ This guide will help you install and set up JERP 2.0 on Windows 11 using Docker 
 
 ```powershell
 # Using Git
-git clone https://github.com/ninoyerbas/JERP-2.0.git
+git clone https://github.com/juliocesarmendeztobar/JERP-2.0.git
 cd JERP-2.0
 
 # Or download and extract the ZIP file from GitHub
@@ -288,7 +288,7 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ## Getting Help
 
 - **Documentation:** See `docs/` directory
-- **Issues:** Report at https://github.com/ninoyerbas/JERP-2.0/issues
+- **Issues:** Report at https://github.com/juliocesarmendeztobar/JERP-2.0/issues
 - **API Docs:** http://localhost:8000/api/v1/docs
 
 ## Next Steps

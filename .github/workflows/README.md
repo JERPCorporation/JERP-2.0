@@ -15,7 +15,7 @@
 1. Go to repository Settings → Secrets and variables → Actions
 2. Add two secrets:
    - Name: `DOCKERHUB_USERNAME`
-     Value: Your Docker Hub username (e.g., `ninoyerbas`)
+     Value: Your Docker Hub username (e.g., `juliocesarmendeztobar`)
    
    - Name: `DOCKERHUB_TOKEN`
      Value: The access token from step 1
@@ -23,7 +23,7 @@
 #### 3. Verify Workflow
 - Push to `main` branch or create a PR
 - Check Actions tab to see the workflow run
-- Verify images appear at https://hub.docker.com/r/ninoyerbas/jerp-backend
+- Verify images appear at https://hub.docker.com/r/juliocesarmendeztobar/jerp-backend
 
 ### Image Tagging Strategy
 
@@ -41,7 +41,7 @@ Update `docker-compose.yml` to use published images:
 ```yaml
 services:
   backend:
-    image: ninoyerbas/jerp-backend:latest
+    image: juliocesarmendeztobar/jerp-backend:latest
     # Remove or comment out the build section
     # build:
     #   context: .
