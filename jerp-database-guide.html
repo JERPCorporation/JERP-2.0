@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JERP 2.0 — Database & Data Flow Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232734;
+    --border: #2d3248;
+    --text: #e2e4ed;
+    --text-dim: #8b90a5;
+    --accent: #6c9fff;
+    --accent2: #a78bfa;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --orange: #fb923c;
+    --red: #f87171;
+    --pink: #f472b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+
+  /* Lesson sections */
+  .lesson {
+    margin-bottom: 56px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .lesson:nth-child(2) { animation-delay: 0.05s; }
+  .lesson:nth-child(3) { animation-delay: 0.1s; }
+  .lesson:nth-child(4) { animation-delay: 0.15s; }
+
+  .lesson-number {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(108,159,255,0.1);
+    border: 1px solid rgba(108,159,255,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .lesson h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .lesson p {
+    color: var(--text-dim);
+    font-size: 0.98rem;
+    margin-bottom: 16px;
+  }
+
+  .lesson p strong { color: var(--text); font-weight: 600; }
+
+  /* Analogy boxes */
+  .analogy {
+    background: linear-gradient(135deg, rgba(167,139,250,0.08), rgba(108,159,255,0.08));
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    position: relative;
+  }
+
+  .analogy::before {
+    content: '💡';
+    position: absolute;
+    top: -12px;
+    left: 16px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 1.1rem;
+  }
+
+  .analogy p { color: var(--text); margin-bottom: 0; }
+
+  /* Diagram containers */
+  .diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+
+  .diagram-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+  }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .flow-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    text-align: center;
+    min-width: 120px;
+    transition: all 0.2s;
+  }
+
+  .flow-box:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(108,159,255,0.1);
+  }
+
+  .flow-box .icon { font-size: 1.5rem; margin-bottom: 6px; }
+  .flow-box .label { font-weight: 600; font-size: 0.9rem; }
+  .flow-box .detail { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
+
+  .flow-arrow {
+    color: var(--accent);
+    font-size: 1.3rem;
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+
+  /* Table visualization */
+  .db-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 16px 0;
+  }
+
+  .db-table caption {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--green);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .db-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: rgba(108,159,255,0.1);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .db-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .db-table tr:hover td { background: rgba(108,159,255,0.03); }
+
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .tag-pk { background: rgba(251,191,36,0.15); color: var(--yellow); }
+  .tag-fk { background: rgba(244,114,182,0.15); color: var(--pink); }
+  .tag-type { background: rgba(108,159,255,0.12); color: var(--accent); }
+
+  /* Code blocks */
+  .code-block {
+    background: #0d0f15;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block .code-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    background: var(--surface2);
+    padding: 4px 12px;
+    border-radius: 0 10px 0 8px;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+  }
+
+  .code-block .comment { color: #5a5f78; }
+  .code-block .keyword { color: var(--accent2); }
+  .code-block .string { color: var(--green); }
+  .code-block .highlight { color: var(--yellow); }
+  .code-block .func { color: var(--accent); }
+
+  /* Interactive tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tab-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    background: var(--surface2);
+    color: var(--accent);
+    border-color: var(--accent);
+    border-bottom: 1px solid var(--surface2);
+  }
+
+  .tab-content {
+    display: none;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 0 12px 12px 12px;
+    padding: 24px;
+  }
+
+  .tab-content.active { display: block; }
+
+  /* Relationship lines */
+  .relationships {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+    margin: 20px 0;
+  }
+
+  .rel-table {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .rel-table .name {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+
+  .rel-table .fields {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .rel-connector {
+    text-align: center;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  .rel-connector .arrow { font-size: 1.2rem; }
+  .rel-connector .label { font-size: 0.7rem; color: var(--text-dim); }
+
+  /* Steps */
+  .steps {
+    position: relative;
+    padding-left: 36px;
+  }
+
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+    border-radius: 2px;
+  }
+
+  .step {
+    position: relative;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .step::before {
+    content: attr(data-step);
+    position: absolute;
+    left: -36px;
+    top: 16px;
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .step .step-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+  }
+
+  .step .step-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  .step code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(108,159,255,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+
+  /* Vocab list */
+  .vocab {
+    display: grid;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .vocab-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 16px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .vocab-term {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+
+  .vocab-def {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 1.6rem; }
+    .flow { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+    .relationships { grid-template-columns: 1fr; }
+    .vocab-item { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <h1>JERP 2.0 — Database & Data Flow</h1>
+  <p class="subtitle">A beginner's guide to how your ERP stores and moves data. No experience required.</p>
+
+  <!-- LESSON 1 -->
+  <div class="lesson">
+    <span class="lesson-number">Lesson 1</span>
+    <h2>What Is a Database?</h2>
+    
+    <div class="analogy">
+      <p>Imagine a <strong>filing cabinet</strong> with labeled drawers. Each drawer holds folders (tables), each folder holds pages (rows), and each page has the same columns of information. A database is exactly that — but digital, fast, and searchable.</p>
+    </div>
+
+    <p>Your project uses <strong>MySQL 8.0</strong> — one of the most popular databases in the world. It stores everything: users, employees, payslips, compliance violations, and audit logs.</p>
+
+    <p>Here's how the three services in your <strong>docker-compose.yml</strong> work together:</p>
+
+    <div class="diagram">
+      <div class="diagram-title">Your 3 Docker Services</div>
+      <div class="flow">
+        <div class="flow-box">
+          <div class="icon">🖥️</div>
+          <div class="label">You (Browser)</div>
+          <div class="detail">localhost:8000</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="border-color: var(--green);">
+          <div class="icon">⚡</div>
+          <div class="label">FastAPI Backend</div>
+          <div class="detail">Python app</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="border-color: var(--yellow);">
+          <div class="icon">🗄️</div>
+          <div class="label">MySQL</div>
+          <div class="detail">Stores data</div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:16px;">
+        <div class="flow" style="justify-content: center;">
+          <div class="flow-box" style="border-color: var(--orange); min-width: 100px;">
+            <div class="icon">⚡</div>
+            <div class="label">Redis</div>
+            <div class="detail">Cache (fast temp storage)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p><strong>MySQL</strong> = permanent storage (like a hard drive for your app's data).<br>
+    <strong>Redis</strong> = temporary fast storage (like a sticky note for things you need quick access to).<br>
+    <strong>FastAPI</strong> = the "brain" that decides what to read/write and when.</p>
+  </div>
+
+  <!-- LESSON 2 -->
+  <div class="lesson">
+    <span class="lesson-number">Lesson 2</span>
+    <h2>Tables: Where Your Data Lives</h2>
+
+    <p>Inside your MySQL database (named <strong>"jerp"</strong>), your data is organized into <strong>tables</strong>. Each table is like a spreadsheet with fixed columns. Here are the main ones your project created:</p>
+
+    <div class="diagram">
+      <table class="db-table">
+        <caption>📋 users</caption>
+        <tr>
+          <th>Column</th>
+          <th>Type</th>
+          <th>What It Stores</th>
+        </tr>
+        <tr>
+          <td>id <span class="tag tag-pk">PK</span></td>
+          <td><span class="tag tag-type">INT</span></td>
+          <td>Unique number for each user (1, 2, 3...)</td>
+        </tr>
+        <tr>
+          <td>email</td>
+          <td><span class="tag tag-type">VARCHAR</span></td>
+          <td>User's email address</td>
+        </tr>
+        <tr>
+          <td>hashed_password</td>
+          <td><span class="tag tag-type">VARCHAR</span></td>
+          <td>Encrypted password (never stored as plain text!)</td>
+        </tr>
+        <tr>
+          <td>full_name</td>
+          <td><span class="tag tag-type">VARCHAR</span></td>
+          <td>User's full name</td>
+        </tr>
+        <tr>
+          <td>is_active</td>
+          <td><span class="tag tag-type">BOOLEAN</span></td>
+          <td>Is account active? (true/false)</td>
+        </tr>
+        <tr>
+          <td>is_superuser</td>
+          <td><span class="tag tag-type">BOOLEAN</span></td>
+          <td>Has full admin powers?</td>
+        </tr>
+        <tr>
+          <td>role_id <span class="tag tag-fk">FK</span></td>
+          <td><span class="tag tag-type">INT</span></td>
+          <td>Links to the <strong>roles</strong> table</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="analogy">
+      <p><strong>PK</strong> = Primary Key — the unique ID for each row. Like a social security number: no two users can have the same one.<br><br>
+      <strong>FK</strong> = Foreign Key — a link to another table. The <code>role_id</code> in the users table points to a row in the roles table. This is how tables connect to each other.</p>
+    </div>
+
+    <div class="diagram">
+      <table class="db-table">
+        <caption>🔐 roles</caption>
+        <tr><th>Column</th><th>Type</th><th>What It Stores</th></tr>
+        <tr>
+          <td>id <span class="tag tag-pk">PK</span></td>
+          <td><span class="tag tag-type">INT</span></td>
+          <td>Unique role ID</td>
+        </tr>
+        <tr><td>name</td><td><span class="tag tag-type">VARCHAR</span></td><td>"Superadmin", "Admin", "Manager", "Employee"</td></tr>
+        <tr><td>description</td><td><span class="tag tag-type">TEXT</span></td><td>What this role can do</td></tr>
+      </table>
+    </div>
+
+    <div class="diagram">
+      <table class="db-table">
+        <caption>💰 payslips</caption>
+        <tr><th>Column</th><th>Type</th><th>What It Stores</th></tr>
+        <tr>
+          <td>id <span class="tag tag-pk">PK</span></td>
+          <td><span class="tag tag-type">INT</span></td>
+          <td>Unique payslip ID</td>
+        </tr>
+        <tr><td>employee_id <span class="tag tag-fk">FK</span></td><td><span class="tag tag-type">INT</span></td><td>Links to the employee</td></tr>
+        <tr><td>payroll_period_id <span class="tag tag-fk">FK</span></td><td><span class="tag tag-type">INT</span></td><td>Links to the pay period</td></tr>
+        <tr><td>regular_hours</td><td><span class="tag tag-type">DECIMAL</span></td><td>Normal hours worked (e.g. 40.00)</td></tr>
+        <tr><td>overtime_hours</td><td><span class="tag tag-type">DECIMAL</span></td><td>Hours at 1.5x rate</td></tr>
+        <tr><td>gross_pay</td><td><span class="tag tag-type">DECIMAL</span></td><td>Total before taxes</td></tr>
+        <tr><td>net_pay</td><td><span class="tag tag-type">DECIMAL</span></td><td>Take-home pay after deductions</td></tr>
+        <tr><td>flsa_compliant</td><td><span class="tag tag-type">BOOLEAN</span></td><td>Does it follow federal labor law?</td></tr>
+      </table>
+    </div>
+
+    <p>There are more tables (<code>permissions</code>, <code>audit_logs</code>, <code>compliance_violations</code>, <code>payroll_periods</code>, <code>employees</code>, etc.), but they all follow the same pattern: columns with types, a primary key, and foreign keys linking to other tables.</p>
+  </div>
+
+  <!-- LESSON 3 -->
+  <div class="lesson">
+    <span class="lesson-number">Lesson 3</span>
+    <h2>How Tables Connect (Relationships)</h2>
+
+    <p>The real power of a database is that tables <strong>reference each other</strong>. This avoids repeating data. Instead of writing "Superadmin" in every user row, you store it once in the roles table and link to it.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">Table Relationships in JERP</div>
+      
+      <div class="relationships">
+        <div class="rel-table">
+          <div class="name" style="color: var(--accent);">users</div>
+          <div class="fields">id, email, role_id ...</div>
+        </div>
+        <div class="rel-connector">
+          <div class="label">role_id → id</div>
+          <div class="arrow">━━━━▸</div>
+          <div class="label">many users → one role</div>
+        </div>
+        <div class="rel-table">
+          <div class="name" style="color: var(--green);">roles</div>
+          <div class="fields">id, name, description</div>
+        </div>
+      </div>
+
+      <div class="relationships" style="margin-top: 16px;">
+        <div class="rel-table">
+          <div class="name" style="color: var(--yellow);">payslips</div>
+          <div class="fields">id, employee_id, period_id ...</div>
+        </div>
+        <div class="rel-connector">
+          <div class="label">employee_id → id</div>
+          <div class="arrow">━━━━▸</div>
+          <div class="label">many payslips → one employee</div>
+        </div>
+        <div class="rel-table">
+          <div class="name" style="color: var(--orange);">employees</div>
+          <div class="fields">id, first_name, position_id ...</div>
+        </div>
+      </div>
+
+      <div class="relationships" style="margin-top: 16px;">
+        <div class="rel-table">
+          <div class="name" style="color: var(--pink);">compliance_violations</div>
+          <div class="fields">id, entity_type, entity_id ...</div>
+        </div>
+        <div class="rel-connector">
+          <div class="label">automatic link</div>
+          <div class="arrow">━━━━▸</div>
+          <div class="label">violations → payslip/timesheet</div>
+        </div>
+        <div class="rel-table">
+          <div class="name" style="color: var(--yellow);">payslips</div>
+          <div class="fields">id, flsa_compliant ...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 4 -->
+  <div class="lesson">
+    <span class="lesson-number">Lesson 4</span>
+    <h2>The Full Data Journey (Step by Step)</h2>
+
+    <p>Let's follow what happens when a manager creates a payslip for an employee. This is the <strong>complete data flow</strong> through your system:</p>
+
+    <div class="steps">
+      <div class="step" data-step="1">
+        <div class="step-title">Manager sends a request</div>
+        <div class="step-desc">They fill out a form or call the API:<br><code>POST /api/v1/payroll/payslips</code> with employee_id, hours, and rate.</div>
+      </div>
+
+      <div class="step" data-step="2">
+        <div class="step-title">FastAPI receives the request</div>
+        <div class="step-desc">The <code>payroll.py</code> endpoint checks: Is the user logged in? (JWT token). Do they have permission? The request data is validated by <strong>Pydantic schemas</strong> — if hours is negative or missing, it gets rejected immediately.</div>
+      </div>
+
+      <div class="step" data-step="3">
+        <div class="step-title">Service layer calculates everything</div>
+        <div class="step-desc"><code>payroll_service.py</code> does the real work:
+          <br>• Looks up the employee in the <strong>employees</strong> table
+          <br>• Checks if they're exempt (salaried) from the <strong>positions</strong> table
+          <br>• Calculates overtime (1.5x after 40hrs, 2x after 12hrs/day)
+          <br>• Calculates taxes (federal, state, Social Security, Medicare)
+          <br>• Checks California minimum wage ($16/hr)
+        </div>
+      </div>
+
+      <div class="step" data-step="4">
+        <div class="step-title">Compliance check runs automatically</div>
+        <div class="step-desc">If the effective hourly rate is below $16, or overtime wasn't calculated correctly, the system:
+          <br>• Sets <code>flsa_compliant = false</code> on the payslip
+          <br>• Creates a new row in <strong>compliance_violations</strong> with severity "CRITICAL"
+        </div>
+      </div>
+
+      <div class="step" data-step="5">
+        <div class="step-title">Data is saved to MySQL</div>
+        <div class="step-desc">SQLAlchemy (the Python library that talks to MySQL) converts the Python object into a SQL <code>INSERT</code> command and writes it to the <strong>payslips</strong> table. The database assigns it an auto-incrementing ID.</div>
+      </div>
+
+      <div class="step" data-step="6">
+        <div class="step-title">Audit log is created</div>
+        <div class="step-desc">A new row is added to <strong>audit_logs</strong> recording: who did it, what they did, when, their IP address, and a SHA-256 hash that chains to the previous log entry (tamper-proof).</div>
+      </div>
+
+      <div class="step" data-step="7">
+        <div class="step-title">Response sent back</div>
+        <div class="step-desc">The API returns the complete payslip (with all calculated values) as JSON to the manager's browser. Done! ✅</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 5 -->
+  <div class="lesson">
+    <span class="lesson-number">Lesson 5</span>
+    <h2>How Python Talks to MySQL (SQLAlchemy)</h2>
+
+    <p>You never write raw SQL in your project. Instead, you use <strong>SQLAlchemy</strong> — a Python library that lets you work with database tables as if they were Python classes.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">Comparison: Raw SQL vs. Your Code</div>
+      
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'tab-sql')">Raw SQL</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-python')">Your Python (SQLAlchemy)</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-explain')">What It Means</button>
+      </div>
+
+      <div id="tab-sql" class="tab-content active">
+        <div class="code-block" style="margin:0;">
+          <pre><span class="comment">-- Finding a user by email in raw SQL:</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users
+<span class="keyword">WHERE</span> email = <span class="string">'admin@jerp.local'</span>;
+
+<span class="comment">-- Creating a new payslip:</span>
+<span class="keyword">INSERT INTO</span> payslips
+  (employee_id, regular_hours, gross_pay)
+<span class="keyword">VALUES</span>
+  (<span class="highlight">5</span>, <span class="highlight">40.00</span>, <span class="highlight">1000.00</span>);</pre>
+        </div>
+      </div>
+
+      <div id="tab-python" class="tab-content">
+        <div class="code-block" style="margin:0;">
+          <pre><span class="comment"># Finding a user by email in your code:</span>
+user = db.<span class="func">query</span>(User).<span class="func">filter</span>(
+    User.email == <span class="string">"admin@jerp.local"</span>
+).<span class="func">first</span>()
+
+<span class="comment"># Creating a new payslip:</span>
+payslip = <span class="func">Payslip</span>(
+    employee_id=<span class="highlight">5</span>,
+    regular_hours=<span class="highlight">40.00</span>,
+    gross_pay=<span class="highlight">1000.00</span>
+)
+db.<span class="func">add</span>(payslip)
+db.<span class="func">commit</span>()</pre>
+        </div>
+      </div>
+
+      <div id="tab-explain" class="tab-content">
+        <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.8;">
+          <strong style="color: var(--text);">They do the same thing!</strong> SQLAlchemy translates your Python into SQL behind the scenes. The benefit:
+        </p>
+        <br>
+        <p style="color: var(--text-dim); font-size: 0.9rem;">
+          <strong style="color:var(--green);">✓ Safer</strong> — Prevents SQL injection attacks automatically<br>
+          <strong style="color:var(--green);">✓ Readable</strong> — Python code is easier to understand<br>
+          <strong style="color:var(--green);">✓ Portable</strong> — Could switch from MySQL to PostgreSQL without rewriting<br>
+          <strong style="color:var(--green);">✓ Validated</strong> — Python catches type errors before they reach the database
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 6 -->
+  <div class="lesson">
+    <span class="lesson-number">Lesson 6</span>
+    <h2>Migrations: Evolving Your Database</h2>
+
+    <p>Your database schema (the structure of tables and columns) changes over time as you add features. You can't just delete everything and start over — you'd lose all the data! That's what <strong>Alembic migrations</strong> are for.</p>
+
+    <div class="analogy">
+      <p>Think of migrations as a <strong>recipe history</strong>. Each migration file says "add this column" or "create this table." You can replay them in order to rebuild the database from scratch, or apply just the new ones to update an existing database.</p>
+    </div>
+
+    <p>Your project has these migrations so far:</p>
+
+    <div class="diagram">
+      <div class="flow">
+        <div class="flow-box" style="border-color: var(--green);">
+          <div class="icon">1️⃣</div>
+          <div class="label">001_initial_schema</div>
+          <div class="detail">users, roles, permissions, audit_logs</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="border-color: var(--yellow);">
+          <div class="icon">2️⃣</div>
+          <div class="label">002_compliance</div>
+          <div class="detail">violations, rules, check_logs</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="border-color: var(--text-dim); border-style: dashed;">
+          <div class="icon">3️⃣</div>
+          <div class="label">003_payroll?</div>
+          <div class="detail">Not yet created</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label">Terminal command</div>
+      <pre><span class="comment"># Apply all migrations (runs 001, then 002, etc.)</span>
+<span class="func">alembic</span> upgrade head
+
+<span class="comment"># Create a new migration after changing models</span>
+<span class="func">alembic</span> revision --autogenerate -m <span class="string">"Add payroll tables"</span>
+
+<span class="comment"># Go back one step (undo last migration)</span>
+<span class="func">alembic</span> downgrade -1</pre>
+    </div>
+  </div>
+
+  <!-- LESSON 7 -->
+  <div class="lesson">
+    <span class="lesson-number">Lesson 7</span>
+    <h2>Vocabulary Cheat Sheet</h2>
+
+    <p>Keep this handy as you explore the code:</p>
+
+    <div class="vocab">
+      <div class="vocab-item">
+        <div class="vocab-term">MySQL</div>
+        <div class="vocab-def">The database software. Stores all your data permanently in tables.</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Redis</div>
+        <div class="vocab-def">Fast temporary storage. Used for caching (avoid re-querying MySQL for the same thing) and job queues.</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">SQLAlchemy</div>
+        <div class="vocab-def">Python library (called an ORM) that lets you use Python classes instead of writing raw SQL.</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Alembic</div>
+        <div class="vocab-def">Migration tool. Tracks changes to your database structure over time so you can upgrade safely.</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Model</div>
+        <div class="vocab-def">A Python class that maps to a database table. <code>User</code> class → <code>users</code> table.</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Primary Key (PK)</div>
+        <div class="vocab-def">The unique identifier for each row. Usually <code>id</code> = 1, 2, 3, ...</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Foreign Key (FK)</div>
+        <div class="vocab-def">A column that points to another table's primary key. Creates a relationship between tables.</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Session / db</div>
+        <div class="vocab-def">A "conversation" with the database. You open one, make changes, then <code>commit()</code> to save or <code>rollback()</code> to undo.</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Migration</div>
+        <div class="vocab-def">A file that describes a change to the database structure (add table, add column, etc.).</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Schema</div>
+        <div class="vocab-def">Two meanings: (1) the structure of your database tables, or (2) Pydantic validation rules for API input/output.</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">DECIMAL</div>
+        <div class="vocab-def">A data type for exact numbers (money!). Unlike regular decimals, it never has rounding errors.</div>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">CRUD</div>
+        <div class="vocab-def"><strong>C</strong>reate, <strong>R</strong>ead, <strong>U</strong>pdate, <strong>D</strong>elete — the four basic operations on any data.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(event, tabId) {
+  const parent = event.target.closest('.diagram');
+  parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+</script>
+
+</body>
+</html>
